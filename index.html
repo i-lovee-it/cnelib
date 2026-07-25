@@ -3,860 +3,426 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#17324d" />
   <title>도서관 가짜뉴스 탐험단</title>
-
   <style>
-    :root {
-      --navy: #18334d;
-      --navy-dark: #10263a;
-      --paper: #fffaf0;
-      --paper-deep: #f3e6cb;
-      --ink: #242424;
-      --green: #50a83f;
-      --green-dark: #357e2a;
-      --red: #dc463b;
-      --red-dark: #a92d26;
-      --gold: #d8a94a;
-      --shadow: 0 14px 35px rgba(26, 35, 48, 0.2);
+    :root{
+      --paper:#f7f0dc;
+      --paper2:#efe3c2;
+      --ink:#1f1d18;
+      --muted:#6e6658;
+      --red:#a9362d;
+      --green:#2f6b4f;
+      --gold:#c9a34b;
+      --line:#2b2822;
+      --shadow:rgba(40,31,17,.22);
     }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--ink);
-      font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:"Noto Serif KR","Nanum Myeongjo","Malgun Gothic",serif;background:#c9b994;color:var(--ink)}
+    body{
+      display:flex;justify-content:center;align-items:center;
+      min-height:100vh;padding:18px;
       background:
-        radial-gradient(circle at top left, rgba(255,255,255,.75), transparent 32%),
-        linear-gradient(145deg, #d9c8a8, #f4ead8 45%, #d8c39d);
-      overflow-x: hidden;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-    }
-
-    .app {
-      width: min(100%, 540px);
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: 20px 14px 28px;
-      display: grid;
-      align-items: center;
-    }
-
-    .screen {
-      display: none;
-      animation: fadeIn .45s ease;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    .paper {
-      position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(rgba(255,255,255,.25), rgba(255,255,255,.1)),
-        repeating-linear-gradient(
-          0deg,
-          rgba(92,63,30,.025),
-          rgba(92,63,30,.025) 1px,
-          transparent 1px,
-          transparent 4px
-        ),
-        var(--paper);
-      border: 1px solid rgba(88, 59, 28, .25);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-    }
-
-    .paper::before,
-    .paper::after {
-      content: "";
-      position: absolute;
-      width: 80px;
-      height: 28px;
-      background: rgba(210, 186, 142, .5);
-      top: 8px;
-      transform: rotate(-7deg);
-      z-index: 2;
-    }
-
-    .paper::before {
-      left: -20px;
-    }
-
-    .paper::after {
-      right: -22px;
-      transform: rotate(8deg);
-    }
-
-    .hero {
-      padding: 22px 22px 26px;
-      text-align: center;
-    }
-
-    .masthead {
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-      border-bottom: 3px double #6c604f;
-      font-family: Georgia, "Times New Roman", serif;
-      font-weight: 800;
-      letter-spacing: .08em;
-      color: #6c604f;
-    }
-
-    .breaking {
-      display: inline-block;
-      padding: 6px 12px;
-      margin-bottom: 14px;
-      border: 4px solid var(--red);
-      color: var(--red);
-      font-size: clamp(1.2rem, 5vw, 1.65rem);
-      font-weight: 950;
-      transform: rotate(-3deg);
-      box-shadow: inset 0 0 0 2px rgba(220,70,59,.15);
-    }
-
-    h1 {
-      margin: 6px 0 12px;
-      font-size: clamp(2.2rem, 9vw, 3.5rem);
-      line-height: 1.08;
-      letter-spacing: -.055em;
-    }
-
-    .subtitle {
-      margin: 0 auto 22px;
-      max-width: 400px;
-      font-size: 1.03rem;
-      line-height: 1.7;
-      color: #514c44;
-    }
-
-    .pixel-scene {
-      min-height: 190px;
-      margin: 18px -22px 22px;
-      display: grid;
-      place-items: end center;
-      padding: 20px;
-      background:
-        linear-gradient(#bfe3ff 0 58%, #92c86b 58% 72%, #c49b67 72%);
-      border-top: 3px solid rgba(24,51,77,.12);
-      border-bottom: 3px solid rgba(24,51,77,.12);
-      position: relative;
-    }
-
-    .library {
-      width: 230px;
-      height: 120px;
-      background: #d5bd8d;
-      border: 5px solid #604a33;
-      position: relative;
-      box-shadow: inset 0 -18px rgba(76,55,35,.12);
-    }
-
-    .library::before {
-      content: "LIBRARY";
-      position: absolute;
-      top: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 130px;
-      padding: 4px 0;
-      background: #f0dfb9;
-      border: 3px solid #604a33;
-      font-family: Georgia, serif;
-      font-weight: 900;
-    }
-
-    .library::after {
-      content: "🐇  🐻  🦊";
-      position: absolute;
-      left: 50%;
-      bottom: -27px;
-      transform: translateX(-50%);
-      font-size: 2.15rem;
-      white-space: nowrap;
-      filter: drop-shadow(0 3px 0 rgba(0,0,0,.15));
-    }
-
-    .primary-btn {
-      width: 100%;
-      min-height: 60px;
-      padding: 15px 20px;
-      color: white;
-      background: linear-gradient(180deg, #294d71, var(--navy));
-      border-radius: 12px;
-      font-size: 1.16rem;
-      font-weight: 900;
-      box-shadow: 0 5px 0 var(--navy-dark);
-      transition: transform .15s ease, box-shadow .15s ease;
-    }
-
-    .primary-btn:active {
-      transform: translateY(4px);
-      box-shadow: 0 1px 0 var(--navy-dark);
-    }
-
-    .register-card {
-      padding: 34px 24px 28px;
-    }
-
-    .topbar {
-      margin: -34px -24px 28px;
-      padding: 18px 20px;
-      background: var(--navy);
-      color: #fff;
-      text-align: center;
-      font-size: 1.35rem;
-      font-weight: 900;
-    }
-
-    .detective {
-      font-size: 4.5rem;
-      text-align: center;
-      margin-bottom: 10px;
-      filter: drop-shadow(0 5px 0 rgba(0,0,0,.12));
-    }
-
-    .speech {
-      margin: 0 auto 24px;
-      padding: 16px 18px;
-      background: #fff;
-      border: 3px solid #b5cde0;
-      border-radius: 18px;
-      line-height: 1.6;
-      text-align: center;
-      font-weight: 700;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 9px;
-      font-weight: 900;
-    }
-
-    input {
-      width: 100%;
-      min-height: 56px;
-      padding: 14px 16px;
-      border: 2px solid #c9bda8;
-      border-radius: 12px;
-      background: rgba(255,255,255,.72);
-      outline: none;
-      font-size: 1.1rem;
-    }
-
-    input:focus {
-      border-color: var(--navy);
-      box-shadow: 0 0 0 4px rgba(24,51,77,.12);
-    }
-
-    .privacy {
-      margin: 11px 0 22px;
-      color: #6f675c;
-      font-size: .9rem;
-    }
-
-    .mission-note {
-      margin-top: 26px;
-      padding: 18px;
-      background: #f3e7c9;
-      border: 2px dashed #c8ad73;
-      border-radius: 12px;
-      line-height: 1.65;
-    }
-
-    .quiz-wrap {
-      perspective: 1400px;
-    }
-
-    .news-card {
-      padding: 22px 22px 24px;
-      transform-origin: left center;
-    }
-
-    .news-card.flip-out {
-      animation: flipOut .45s ease forwards;
-    }
-
-    .news-card.flip-in {
-      animation: flipIn .5s ease;
-    }
-
-    .news-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 18px;
-      font-weight: 900;
-    }
-
-    .alert {
-      color: var(--red);
-      font-size: 1.15rem;
-    }
-
-    .counter {
-      font-size: 1.08rem;
-    }
-
-    .headline {
-      margin: 16px 0 14px;
-      font-size: clamp(1.65rem, 7vw, 2.3rem);
-      line-height: 1.35;
-      text-align: center;
-      letter-spacing: -.04em;
-      word-break: keep-all;
-    }
-
-    .article-lines {
-      height: 50px;
-      margin: 12px 12px 22px;
-      opacity: .18;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          #55493a 0 4px,
-          transparent 4px 11px
-        );
-    }
-
-    .illustration {
-      min-height: 135px;
-      margin: 6px 0 22px;
-      display: grid;
-      place-items: center;
-      font-size: 5.2rem;
-      filter: drop-shadow(0 6px 0 rgba(0,0,0,.10));
-    }
-
-    .choice-grid {
-      display: grid;
-      gap: 14px;
-    }
-
-    .choice {
-      min-height: 64px;
-      padding: 14px;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 1.18rem;
-      font-weight: 950;
-      box-shadow: 0 5px 0 rgba(0,0,0,.2);
-      transition: transform .13s ease, filter .13s ease;
-    }
-
-    .choice:active {
-      transform: translateY(4px);
-      box-shadow: 0 1px 0 rgba(0,0,0,.22);
-    }
-
-    .choice.true {
-      background: linear-gradient(180deg, #69bf4e, var(--green));
-    }
-
-    .choice.false {
-      background: linear-gradient(180deg, #ed5a4f, var(--red));
-    }
-
-    .hint {
-      margin-top: 22px;
-      padding: 14px 16px;
-      background: #f3e7c9;
-      border-radius: 12px;
-      text-align: center;
-      color: #5e513f;
-      font-size: .95rem;
-      line-height: 1.5;
-    }
-
-    .progress {
-      display: flex;
-      gap: 8px;
-      margin-top: 18px;
-      justify-content: center;
-    }
-
-    .progress-book {
-      font-size: 1.55rem;
-      filter: grayscale(1);
-      opacity: .28;
-      transition: .25s ease;
-    }
-
-    .progress-book.done {
-      filter: none;
-      opacity: 1;
-      transform: translateY(-2px);
-    }
-
-    .feedback-card {
-      padding: 28px 24px 26px;
-      text-align: center;
-    }
-
-    .ribbon {
-      display: inline-block;
-      margin-bottom: 18px;
-      padding: 10px 22px;
-      color: white;
-      font-size: 1.25rem;
-      font-weight: 950;
-      background: var(--green);
-      clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%);
-    }
-
-    .ribbon.wrong {
-      background: var(--red);
-    }
-
-    .feedback-icon {
-      font-size: 5rem;
-      margin: 4px 0 10px;
-    }
-
-    .feedback-title {
-      margin: 0 0 12px;
-      font-size: 2rem;
-      letter-spacing: -.04em;
-    }
-
-    .feedback-text {
-      line-height: 1.75;
-      word-break: keep-all;
-    }
-
-    .feedback-text strong {
-      color: var(--red);
-    }
-
-    .secondary-btn {
-      width: 100%;
-      min-height: 56px;
-      margin-top: 22px;
-      color: white;
-      background: var(--green);
-      border-radius: 11px;
-      font-weight: 900;
-      font-size: 1.08rem;
-      box-shadow: 0 4px 0 var(--green-dark);
-    }
-
-    .complete {
-      padding: 30px 22px 26px;
-      text-align: center;
-      background:
-        linear-gradient(rgba(255,255,255,.28), rgba(255,255,255,.05)),
-        var(--paper);
-    }
-
-    .complete h2 {
-      margin: 8px 0 16px;
-      font-size: clamp(2rem, 8vw, 3rem);
-      letter-spacing: -.055em;
-    }
-
-    .certificate {
-      margin: 22px 0;
-      padding: 22px 18px;
-      border: 4px double #735c35;
-      background: #fff8df;
-    }
-
-    .certificate-name {
-      font-size: 1.35rem;
-      font-weight: 950;
-      color: var(--navy);
-    }
-
-    .stamp {
-      width: 105px;
-      aspect-ratio: 1;
-      margin: 18px auto 0;
-      display: grid;
-      place-items: center;
-      border: 6px double var(--red);
-      border-radius: 50%;
-      color: var(--red);
-      font-weight: 950;
-      transform: rotate(-8deg);
-      animation: stamp .5s cubic-bezier(.2,1.7,.4,1);
-    }
-
-    .show-staff {
-      margin: 18px 0 0;
-      padding: 14px;
-      background: #fff3cf;
-      border: 2px dashed #d4a84d;
-      border-radius: 12px;
-      font-weight: 900;
-    }
-
-    .confetti {
-      font-size: 1.7rem;
-      letter-spacing: .25em;
-      animation: float 1.7s ease-in-out infinite alternate;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes flipOut {
-      to {
-        transform: rotateY(-88deg) translateX(-25px);
-        opacity: 0;
-      }
-    }
-
-    @keyframes flipIn {
-      from {
-        transform: rotateY(78deg) translateX(20px);
-        opacity: 0;
-      }
-      to {
-        transform: rotateY(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes stamp {
-      from { transform: scale(2.2) rotate(-15deg); opacity: 0; }
-      to { transform: scale(1) rotate(-8deg); opacity: 1; }
-    }
-
-    @keyframes float {
-      from { transform: translateY(0); }
-      to { transform: translateY(-8px); }
-    }
-
-    @media (min-width: 700px) {
-      .app {
-        padding-block: 34px;
-      }
+        radial-gradient(circle at 20% 20%,rgba(255,255,255,.18),transparent 22%),
+        linear-gradient(135deg,#b9a77d,#d9c9a3);
+    }
+    button,input{font:inherit}
+    .app{
+      width:min(100%,520px);
+      min-height:760px;
+      position:relative;
+      overflow:hidden;
+      border:4px solid #2f2a20;
+      border-radius:20px;
+      background:var(--paper);
+      box-shadow:0 18px 50px rgba(0,0,0,.25);
+    }
+    .paper-texture{
+      position:absolute;inset:0;pointer-events:none;opacity:.16;
+      background-image:
+        repeating-linear-gradient(0deg,rgba(60,45,20,.14) 0 1px,transparent 1px 4px),
+        repeating-linear-gradient(90deg,rgba(60,45,20,.06) 0 1px,transparent 1px 7px);
+      mix-blend-mode:multiply;
+    }
+    .topbar{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:10px 14px;border-bottom:2px solid var(--line);background:#e7d8b6;
+      position:relative;z-index:2;
+    }
+    .brand{font-size:12px;font-weight:800;letter-spacing:-.2px}
+    .sound{
+      border:2px solid var(--line);background:var(--paper);border-radius:999px;
+      width:38px;height:38px;cursor:pointer;font-size:18px;
+    }
+    .screen{display:none;position:relative;z-index:1;padding:22px 20px 30px;min-height:700px}
+    .screen.active{display:block;animation:pageIn .45s ease both}
+    @keyframes pageIn{from{opacity:0;transform:rotateY(-8deg) translateX(14px)}to{opacity:1;transform:none}}
+    .edition{
+      display:inline-block;border:2px solid var(--line);padding:4px 10px;
+      font-weight:900;font-size:13px;background:#fff8e8;margin-bottom:10px;
+    }
+    .masthead{
+      text-align:center;border-top:4px double var(--line);border-bottom:4px double var(--line);
+      padding:10px 4px;margin-bottom:18px;
+    }
+    .org{font-size:12px;font-weight:700;letter-spacing:.5px}
+    h1{font-size:34px;line-height:1.12;margin:8px 0 4px;letter-spacing:-1.8px}
+    h2{font-size:28px;line-height:1.2;margin:8px 0;letter-spacing:-1px}
+    .subtitle{font-size:15px;font-weight:800;color:var(--red);letter-spacing:1px}
+    .lead{font-size:16px;line-height:1.8;text-align:center;margin:20px 8px}
+    .rule{height:2px;background:var(--line);margin:16px 0}
+    .btn{
+      width:100%;border:3px solid var(--line);border-radius:12px;padding:16px 18px;
+      background:#fff9ea;color:var(--ink);font-weight:900;font-size:18px;cursor:pointer;
+      box-shadow:4px 4px 0 var(--line);transition:.12s transform,.12s box-shadow;
+    }
+    .btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--line)}
+    .btn.primary{background:#f4d76f}
+    .btn.true{background:#dcefe4;color:#1f563d}
+    .btn.false{background:#f3ddd9;color:#84271f}
+    .btn.small{padding:11px;font-size:15px}
+    .footnote{font-size:11px;color:var(--muted);text-align:center;margin-top:18px;line-height:1.5}
+    .characters{display:flex;justify-content:center;gap:16px;margin:18px 0 6px}
+    .char{width:86px;text-align:center}
+    .char .face{
+      height:82px;display:grid;place-items:center;font-size:56px;
+      filter:drop-shadow(3px 3px 0 rgba(0,0,0,.14));
+      animation:bob 2s ease-in-out infinite;
+    }
+    .char:nth-child(2) .face{animation-delay:.25s}
+    .char:nth-child(3) .face{animation-delay:.5s}
+    @keyframes bob{50%{transform:translateY(-5px)}}
+    .char b{font-size:13px}
+    .form-card{
+      border:3px solid var(--line);background:#fff8e8;padding:20px;border-radius:14px;
+      box-shadow:6px 6px 0 rgba(43,40,34,.2);margin:20px 0;
+    }
+    label{display:block;font-weight:900;margin-bottom:10px}
+    input{
+      width:100%;padding:15px;border:2px solid var(--line);border-radius:9px;background:#fffdf7;
+      font-size:18px;outline:none;
+    }
+    .progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .progress{flex:1;height:14px;border:2px solid var(--line);background:#fff8e8;border-radius:999px;overflow:hidden}
+    .progress > div{height:100%;width:20%;background:var(--gold);transition:width .35s ease}
+    .progress-label{font-size:13px;font-weight:900}
+    .news-tag{font-size:14px;color:var(--red);font-weight:900;letter-spacing:.6px}
+    .headline{
+      font-size:26px;line-height:1.45;text-align:center;margin:22px 0;
+      padding:18px 8px;border-top:2px solid var(--line);border-bottom:2px solid var(--line);
+    }
+    .reporter{
+      display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center;
+      background:#eadfca;border:2px solid var(--line);border-radius:12px;padding:12px;margin:14px 0 18px;
+    }
+    .avatar{font-size:52px;text-align:center}
+    .reporter-name{font-weight:900;margin-bottom:4px}
+    .quote{font-size:14px;line-height:1.5;color:#403b33}
+    .choices{display:grid;gap:12px}
+    .hintbox{
+      display:none;border-left:6px solid var(--gold);background:#fff7dc;padding:14px;
+      margin-top:14px;line-height:1.6;font-size:14px;
+    }
+    .hintbox.show{display:block;animation:fade .25s ease}
+    @keyframes fade{from{opacity:0}to{opacity:1}}
+    .feedback{
+      text-align:center;border:3px solid var(--line);padding:18px;border-radius:14px;background:#fff9e9;
+      margin:18px 0;position:relative;overflow:hidden;
+    }
+    .stamp{
+      display:inline-block;border:5px solid var(--green);color:var(--green);
+      font-weight:1000;font-size:24px;padding:8px 16px;border-radius:8px;
+      transform:rotate(-5deg);margin-bottom:10px;animation:stamp .25s ease both;
+    }
+    @keyframes stamp{from{transform:scale(2) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(-5deg);opacity:1}}
+    .wrong .stamp{border-color:var(--red);color:var(--red)}
+    .explain{font-size:15px;line-height:1.7}
+    .shake{animation:shake .35s ease}
+    @keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+    .certificate{
+      border:5px double var(--line);padding:22px 14px;background:#fff9e8;text-align:center;
+      box-shadow:inset 0 0 0 8px #ead8ad;margin-top:10px;
+    }
+    .certificate .name{font-size:28px;font-weight:1000;margin:14px 0;color:var(--red)}
+    .badge{font-size:58px;margin:8px 0}
+    .staff{
+      margin-top:18px;background:#2d2921;color:#fff7df;padding:14px;border-radius:10px;
+      font-weight:900;text-align:center;animation:pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse{50%{transform:scale(1.025)}}
+    .confetti{font-size:24px;letter-spacing:8px;margin:6px 0}
+    .hidden{display:none!important}
+    @media (max-width:420px){
+      body{padding:0}
+      .app{min-height:100vh;border-radius:0;border-left:0;border-right:0}
+      .screen{min-height:calc(100vh - 58px);padding:18px 16px 26px}
+      h1{font-size:30px}
+      .headline{font-size:22px}
     }
   </style>
 </head>
-
 <body>
-  <main class="app">
-    <!-- 시작 화면 -->
-    <section id="startScreen" class="screen active">
-      <div class="paper hero">
-        <div class="masthead">DAILY LIBRARY NEWS · 특별호</div>
-        <div class="breaking">긴급속보</div>
-        <h1>도서관에<br />가짜뉴스가<br />퍼지고 있다!</h1>
-        <p class="subtitle">
-          잘못된 정보를 찾아내고<br />
-          통합도서관의 진실을 지켜주세요!
+  <main class="app" id="app">
+    <div class="paper-texture"></div>
+    <header class="topbar">
+      <div class="brand">충청남도교육청 통합도서관</div>
+      <button class="sound" id="soundBtn" aria-label="소리 켜기/끄기">🔊</button>
+    </header>
+
+    <section class="screen active" id="startScreen">
+      <div class="edition">특별속보</div>
+      <div class="masthead">
+        <div class="org">충청남도교육청 통합도서관</div>
+        <h1>도서관 가짜뉴스 탐험단</h1>
+        <div class="subtitle">진실을 찾아라!</div>
+      </div>
+
+      <div class="characters" aria-hidden="true">
+        <div class="char"><div class="face">🐰</div><b>토리</b></div>
+        <div class="char"><div class="face">🐻</div><b>곰곰이</b></div>
+        <div class="char"><div class="face">🦊</div><b>여울이</b></div>
+      </div>
+
+      <p class="lead">
+        최근 충청남도교육청 통합도서관 이용과 관련하여<br>
+        사실과 다른 정보가 퍼지고 있다는 제보가 접수되었습니다.<br><br>
+        탐험대원이 되어 <b>5개의 제보</b>를 확인하고<br>
+        도서관의 진실을 밝혀주세요.
+      </p>
+
+      <button class="btn primary" id="startBtn">탐험 시작하기</button>
+      <div class="footnote">본 콘텐츠는 충청남도교육청 통합도서관 홍보 체험 콘텐츠입니다.</div>
+    </section>
+
+    <section class="screen" id="registerScreen">
+      <div class="edition">탐험대원 등록</div>
+      <div class="masthead">
+        <div class="org">충청남도교육청 통합도서관</div>
+        <h2>팩트체크 탐험대원 등록</h2>
+      </div>
+      <div class="form-card">
+        <label for="nameInput">이름 또는 닉네임</label>
+        <input id="nameInput" maxlength="12" placeholder="예: 책사랑" autocomplete="off" />
+        <div class="footnote" style="text-align:left;margin-top:10px">※ 입력한 이름은 완료 화면에만 표시되며 저장되지 않습니다.</div>
+      </div>
+      <button class="btn primary" id="registerBtn">등록하고 시작하기</button>
+    </section>
+
+    <section class="screen" id="quizScreen">
+      <div class="progress-wrap">
+        <div class="progress"><div id="progressBar"></div></div>
+        <div class="progress-label" id="progressLabel">1 / 5</div>
+      </div>
+
+      <div class="edition" id="editionText">제1호</div>
+      <div class="masthead">
+        <div class="org">충청남도교육청 통합도서관</div>
+        <h2 id="paperName">토리특보</h2>
+      </div>
+
+      <div class="news-tag" id="newsTag">🚨 긴급속보</div>
+      <div class="headline" id="questionText"></div>
+
+      <div class="reporter">
+        <div class="avatar" id="reporterEmoji">🐰</div>
+        <div>
+          <div class="reporter-name" id="reporterName">토리 기자</div>
+          <div class="quote" id="reporterQuote"></div>
+        </div>
+      </div>
+
+      <div class="choices" id="choices">
+        <button class="btn true" data-answer="true">🟢 진실이다</button>
+        <button class="btn false" data-answer="false">🔴 가짜뉴스다</button>
+        <button class="btn small" id="hintBtn">💡 힌트 보기</button>
+      </div>
+
+      <div class="hintbox" id="hintBox"></div>
+
+      <div class="feedback hidden" id="feedback">
+        <div class="stamp" id="stampText">팩트체크 완료</div>
+        <div class="explain" id="explainText"></div>
+      </div>
+
+      <button class="btn primary hidden" id="nextBtn">다음 제보 확인하기</button>
+      <button class="btn hidden" id="retryBtn">다시 확인하기</button>
+    </section>
+
+    <section class="screen" id="endScreen">
+      <div class="edition">특별호</div>
+      <div class="certificate">
+        <div class="org">충청남도교육청 통합도서관</div>
+        <h2>팩트체크 완료</h2>
+        <div class="confetti">✦ 🎉 ✦</div>
+        <div class="badge">🏅</div>
+        <div class="name" id="finalName">탐험대원</div>
+        <p class="lead" style="margin:8px 0 16px">
+          5개의 제보를 모두 확인하여<br>
+          도서관의 진실을 밝혀냈습니다.
         </p>
-
-        <div class="pixel-scene" aria-hidden="true">
-          <div class="library"></div>
+        <div class="rule"></div>
+        <div class="characters">
+          <div class="char"><div class="face">🐰</div><b>토리</b></div>
+          <div class="char"><div class="face">🐻</div><b>곰곰이</b></div>
+          <div class="char"><div class="face">🦊</div><b>여울이</b></div>
         </div>
-
-        <button class="primary-btn" type="button" onclick="showScreen('registerScreen')">
-          탐험 시작하기 ▶
-        </button>
+        <p class="footnote" style="font-size:13px;color:#383229">
+          토리: “덕분에 모든 제보를 확인했어요!”<br>
+          곰곰이: “정확한 정보를 전할 수 있게 되었어요!”<br>
+          여울이: “다음 탐험도 함께해요!”
+        </p>
       </div>
-    </section>
-
-    <!-- 이름 입력 화면 -->
-    <section id="registerScreen" class="screen">
-      <div class="paper register-card">
-        <div class="topbar">📖 도서관 가짜뉴스 탐험단 📖</div>
-        <div class="detective" aria-hidden="true">🐰🔎</div>
-
-        <div class="speech">
-          안녕! 나는 탐험대장 토리야.<br />
-          가짜뉴스를 찾기 위해<br />
-          먼저 탐험대원 이름을 알려줘!
-        </div>
-
-        <label for="playerName">탐험대원 이름</label>
-        <input
-          id="playerName"
-          type="text"
-          maxlength="12"
-          autocomplete="off"
-          placeholder="이름 또는 별명을 입력해주세요"
-        />
-
-        <p class="privacy">※ 이름은 저장되지 않고 이번 탐험에서만 사용돼요.</p>
-
-        <button class="primary-btn" type="button" onclick="startQuiz()">
-          탐험 시작!
-        </button>
-
-        <div class="mission-note">
-          <strong>탐험 정보</strong><br />
-          총 5개의 제보를 확인하고<br />
-          가짜뉴스를 찾아주세요!
-        </div>
-      </div>
-    </section>
-
-    <!-- 문제 화면 -->
-    <section id="quizScreen" class="screen quiz-wrap">
-      <div id="newsCard" class="paper news-card">
-        <div class="news-meta">
-          <span class="alert">🚨 긴급 제보!</span>
-          <span id="questionCounter" class="counter">1 / 5</span>
-        </div>
-
-        <h2 id="questionText" class="headline"></h2>
-        <div class="article-lines" aria-hidden="true"></div>
-        <div id="questionIcon" class="illustration" aria-hidden="true"></div>
-
-        <div class="choice-grid">
-          <button class="choice true" type="button" onclick="answerQuestion(true)">
-            🟢 진실이다!
-          </button>
-          <button class="choice false" type="button" onclick="answerQuestion(false)">
-            🔴 가짜뉴스다!
-          </button>
-        </div>
-
-        <div class="hint">
-          🔍 힌트가 필요하다면 부스의 안내자료를 살펴보세요!
-        </div>
-
-        <div id="progress" class="progress" aria-label="문제 진행 상황"></div>
-      </div>
-    </section>
-
-    <!-- 정답 피드백 화면 -->
-    <section id="feedbackScreen" class="screen">
-      <div class="paper feedback-card">
-        <div id="feedbackRibbon" class="ribbon">정답!</div>
-        <div id="feedbackIcon" class="feedback-icon">🐰🔎</div>
-        <h2 id="feedbackTitle" class="feedback-title"></h2>
-        <p id="feedbackText" class="feedback-text"></p>
-
-        <button id="nextButton" class="secondary-btn" type="button" onclick="nextQuestion()">
-          다음 제보 보기 ▶
-        </button>
-      </div>
-    </section>
-
-    <!-- 완료 화면 -->
-    <section id="completeScreen" class="screen">
-      <div class="paper complete">
-        <div class="confetti">🎉 ✨ 🎊 ✨ 🎉</div>
-        <h2>가짜뉴스를<br />모두 찾아냈습니다!</h2>
-        <p>통합도서관의 진실을 지켜주셔서 감사합니다.</p>
-
-        <div class="certificate">
-          <div id="certificateName" class="certificate-name">OO 탐험대원</div>
-          <p>도서관 가짜뉴스 탐험단</p>
-          <strong>임무 완료!</strong>
-          <div class="stamp">탐험<br />성공</div>
-        </div>
-
-        <div class="show-staff">
-          ⚠️ 이 화면을 직원에게 보여주세요!
-        </div>
-
-        <button class="primary-btn" type="button" style="margin-top:18px;" onclick="restartGame()">
-          처음부터 다시 하기
-        </button>
-      </div>
+      <div class="staff">📱 직원에게 이 화면을 보여주세요!<br>🎁 기념품을 받아가세요.</div>
+      <button class="btn" id="restartBtn" style="margin-top:14px">처음부터 다시하기</button>
     </section>
   </main>
 
   <script>
-    /*
-      문제 수정 방법
-      - question: 화면에 보일 제보 문장
-      - answer: true = 진실, false = 가짜뉴스
-      - explanation: 정답 화면 설명
-      - icon: 문제 화면 그림용 이모지
-    */
     const questions = [
       {
-        question: "통합도서관 회원카드 하나로 20개 도서관을 모두 이용할 수 있다!",
-        answer: true,
-        explanation:
-          "통합도서관 회원카드 하나로 <strong>20개 통합도서관</strong>을 이용할 수 있어요!",
-        icon: "🏛️📚"
+        paper:"토리특보", tag:"🚨 긴급속보", emoji:"🐰", reporter:"토리 기자",
+        quote:"탐험대원님, 이 제보가 사실인지 확인해 주세요.",
+        text:"회원카드 하나로 20개 통합도서관을 모두 이용할 수 있다.",
+        answer:true,
+        hint:"회원카드는 한 도서관에서만 쓰는 카드일까요, 통합해서 사용하는 카드일까요?",
+        explain:"진실입니다. 통합도서관 회원카드 하나로 소속 도서관을 함께 이용할 수 있습니다."
       },
       {
-        question: "통합도서관 홈페이지에서는 20개 도서관의 자료를 한꺼번에 검색할 수 있다!",
-        answer: true,
-        explanation:
-          "통합도서관 홈페이지에서 원하는 자료를 검색하면 <strong>어느 도서관에 소장되어 있는지</strong> 확인할 수 있어요.",
-        icon: "💻🔎"
+        paper:"곰곰일보", tag:"📝 주민 제보", emoji:"🐻", reporter:"곰곰이 기자",
+        quote:"많은 분들이 궁금해하는 내용입니다. 함께 확인해 볼까요?",
+        text:"통합도서관 홈페이지에서 20개 도서관의 자료를 한꺼번에 검색할 수 있다.",
+        answer:true,
+        hint:"통합도서관 홈페이지의 ‘통합검색’ 기능을 떠올려 보세요.",
+        explain:"진실입니다. 통합도서관 홈페이지에서 소속 도서관의 자료를 통합 검색할 수 있습니다."
       },
       {
-        question: "통합도서관 프로그램은 통합도서관 홈페이지에서 신청할 수 있다!",
-        answer: false,
-        explanation:
-          "통합도서관 홈페이지에서는 프로그램을 확인할 수 있지만, 신청은 <strong>충청남도교육청평생교육정보시스템(www.cnall.or.kr)</strong>에서 할 수 있어요.",
-        icon: "🗓️🖥️"
+        paper:"여울뉴스", tag:"🔍 팩트체크 요청", emoji:"🦊", reporter:"여울이 기자",
+        quote:"안내자료 속에 중요한 단서가 있습니다.",
+        text:"도서관 프로그램은 통합도서관 홈페이지에서 신청할 수 있다.",
+        answer:false,
+        hint:"프로그램 신청은 별도의 평생교육 정보시스템에서 진행됩니다.",
+        explain:"가짜뉴스입니다. 프로그램 신청은 충청남도교육청평생교육정보시스템에서 진행합니다."
       },
       {
-        question: "전자책을 이용하려면 반드시 도서관에 직접 방문해야 한다!",
-        answer: false,
-        explanation:
-          "전자책은 도서관에 직접 방문하지 않아도 스마트폰이나 컴퓨터를 이용해 편리하게 볼 수 있어요.",
-        icon: "📱📖"
+        paper:"토리특보", tag:"📱 디지털 특집", emoji:"🐰", reporter:"토리 기자",
+        quote:"전자책은 어디서 이용할 수 있는지 확인해 주세요.",
+        text:"전자책을 이용하려면 반드시 도서관에 직접 방문해야 한다.",
+        answer:false,
+        hint:"전자책은 스마트폰이나 컴퓨터에서도 이용할 수 있습니다.",
+        explain:"가짜뉴스입니다. 전자책은 도서관 홈페이지나 전자도서관 서비스를 통해 온라인으로 이용할 수 있습니다."
       },
       {
-        question: "20개 통합도서관은 모두 운영시간과 휴관일이 똑같다!",
-        answer: false,
-        explanation:
-          "도서관마다 운영시간과 휴관일이 다를 수 있어요. 방문 전 통합도서관 홈페이지에서 확인해 주세요!",
-        icon: "🕘🏛️"
+        paper:"곰곰일보", tag:"⏰ 생활정보", emoji:"🐻", reporter:"곰곰이 기자",
+        quote:"도서관마다 운영 방식이 같은지 살펴보겠습니다.",
+        text:"20개 통합도서관은 모두 운영시간과 휴관일이 똑같다.",
+        answer:false,
+        hint:"도서관별 운영시간과 휴관일은 지역과 시설 여건에 따라 다를 수 있습니다.",
+        explain:"가짜뉴스입니다. 도서관마다 운영시간과 휴관일이 다를 수 있으므로 방문 전 확인이 필요합니다."
       }
     ];
 
-    let currentQuestion = 0;
+    let current = 0;
     let playerName = "탐험대원";
-    let lastAnswerCorrect = false;
+    let soundOn = true;
+    const $ = (id)=>document.getElementById(id);
 
-    function showScreen(screenId) {
-      document.querySelectorAll(".screen").forEach(screen => {
-        screen.classList.remove("active");
-      });
-
-      const next = document.getElementById(screenId);
-      next.classList.add("active");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    const screens = ["startScreen","registerScreen","quizScreen","endScreen"];
+    function showScreen(id){
+      screens.forEach(s=>$(s).classList.toggle("active",s===id));
+      window.scrollTo({top:0,behavior:"smooth"});
     }
 
-    function startQuiz() {
-      const input = document.getElementById("playerName");
-      playerName = input.value.trim() || "탐험대원";
-      currentQuestion = 0;
-      renderQuestion();
-      showScreen("quizScreen");
+    let audioCtx;
+    function beep(type="click"){
+      if(!soundOn) return;
+      try{
+        audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+        const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        if(type==="ok"){o.frequency.setValueAtTime(660,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(990,audioCtx.currentTime+.12)}
+        else if(type==="no"){o.frequency.setValueAtTime(220,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(130,audioCtx.currentTime+.18)}
+        else{o.frequency.value=420}
+        g.gain.setValueAtTime(.08,audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.22);
+        o.start();o.stop(audioCtx.currentTime+.23);
+      }catch(e){}
     }
 
-    function renderQuestion() {
-      const question = questions[currentQuestion];
-      const card = document.getElementById("newsCard");
-
-      card.classList.remove("flip-out");
-      card.classList.add("flip-in");
-
-      document.getElementById("questionCounter").textContent =
-        `${currentQuestion + 1} / ${questions.length}`;
-      document.getElementById("questionText").textContent = question.question;
-      document.getElementById("questionIcon").textContent = question.icon;
-
-      renderProgress();
-
-      window.setTimeout(() => {
-        card.classList.remove("flip-in");
-      }, 500);
+    function renderQuestion(){
+      const q=questions[current];
+      $("editionText").textContent=`제${current+1}호`;
+      $("paperName").textContent=q.paper;
+      $("newsTag").textContent=q.tag;
+      $("reporterEmoji").textContent=q.emoji;
+      $("reporterName").textContent=q.reporter;
+      $("reporterQuote").textContent=`“${q.quote}”`;
+      $("questionText").textContent=q.text;
+      $("hintBox").textContent=q.hint;
+      $("hintBox").classList.remove("show");
+      $("hintBtn").textContent="💡 힌트 보기";
+      $("feedback").className="feedback hidden";
+      $("nextBtn").classList.add("hidden");
+      $("retryBtn").classList.add("hidden");
+      $("choices").classList.remove("hidden");
+      $("progressLabel").textContent=`${current+1} / ${questions.length}`;
+      $("progressBar").style.width=`${((current+1)/questions.length)*100}%`;
     }
 
-    function renderProgress() {
-      const progress = document.getElementById("progress");
-      progress.innerHTML = "";
-
-      questions.forEach((_, index) => {
-        const book = document.createElement("span");
-        book.className = "progress-book";
-        book.textContent = "📖";
-
-        if (index < currentQuestion) {
-          book.classList.add("done");
-        }
-
-        progress.appendChild(book);
-      });
-    }
-
-    function answerQuestion(selectedAnswer) {
-      const question = questions[currentQuestion];
-      lastAnswerCorrect = selectedAnswer === question.answer;
-
-      const ribbon = document.getElementById("feedbackRibbon");
-      const icon = document.getElementById("feedbackIcon");
-      const title = document.getElementById("feedbackTitle");
-      const text = document.getElementById("feedbackText");
-
-      if (lastAnswerCorrect) {
-        ribbon.textContent = question.answer ? "정답!" : "가짜뉴스 발견!";
-        ribbon.classList.remove("wrong");
-        icon.textContent = question.answer ? "🐰🔎" : "🦊🔎";
-        title.textContent = question.answer ? "진실이다!" : "가짜뉴스다!";
-        text.innerHTML = question.explanation;
-      } else {
-        ribbon.textContent = "앗! 다시 생각해볼까?";
-        ribbon.classList.add("wrong");
-        icon.textContent = "🐰💦";
-        title.textContent = "아직 정답을 찾지 못했어요!";
-        text.innerHTML =
-          "부스에 있는 안내자료를 다시 살펴보고<br />한 번 더 선택해 보세요.";
+    function answer(value){
+      const q=questions[current];
+      $("choices").classList.add("hidden");
+      $("feedback").classList.remove("hidden","wrong");
+      if(value===q.answer){
+        beep("ok");
+        $("stampText").textContent="팩트체크 완료";
+        $("explainText").innerHTML=`<b>정확한 판단입니다.</b><br>${q.explain}`;
+        $("nextBtn").classList.remove("hidden");
+        $("nextBtn").textContent=current===questions.length-1 ? "특별호 확인하기" : "다음 제보 확인하기";
+      }else{
+        beep("no");
+        $("feedback").classList.add("wrong","shake");
+        $("stampText").textContent="다시 확인";
+        $("explainText").innerHTML=`<b>한 번 더 살펴볼까요?</b><br>힌트와 안내를 확인한 뒤 다시 판단해 주세요.`;
+        $("retryBtn").classList.remove("hidden");
+        setTimeout(()=>$("feedback").classList.remove("shake"),400);
       }
-
-      const nextButton = document.getElementById("nextButton");
-      nextButton.textContent = lastAnswerCorrect
-        ? (currentQuestion === questions.length - 1 ? "탐험 결과 보기 ▶" : "다음 제보 보기 ▶")
-        : "다시 선택하기";
-
-      showScreen("feedbackScreen");
     }
 
-    function nextQuestion() {
-      if (!lastAnswerCorrect) {
-        showScreen("quizScreen");
-        return;
-      }
-
-      currentQuestion += 1;
-
-      if (currentQuestion >= questions.length) {
-        document.getElementById("certificateName").textContent =
-          `${playerName} 탐험대원`;
-        showScreen("completeScreen");
-        return;
-      }
-
-      const card = document.getElementById("newsCard");
-      card.classList.add("flip-out");
-
-      window.setTimeout(() => {
-        renderQuestion();
-        showScreen("quizScreen");
-      }, 260);
-    }
-
-    function restartGame() {
-      currentQuestion = 0;
-      playerName = "탐험대원";
-      lastAnswerCorrect = false;
-      document.getElementById("playerName").value = "";
-      showScreen("startScreen");
-    }
-
-    document.getElementById("playerName").addEventListener("keydown", event => {
-      if (event.key === "Enter") {
-        startQuiz();
-      }
+    $("startBtn").onclick=()=>{beep();showScreen("registerScreen")};
+    $("registerBtn").onclick=()=>{
+      const v=$("nameInput").value.trim();
+      playerName=v||"탐험대원";
+      beep(); current=0; renderQuestion(); showScreen("quizScreen");
+    };
+    document.querySelectorAll("[data-answer]").forEach(btn=>{
+      btn.onclick=()=>answer(btn.dataset.answer==="true");
     });
+    $("hintBtn").onclick=()=>{
+      beep();
+      $("hintBox").classList.toggle("show");
+      $("hintBtn").textContent=$("hintBox").classList.contains("show")?"💡 힌트 닫기":"💡 힌트 보기";
+    };
+    $("retryBtn").onclick=()=>{
+      beep(); $("feedback").classList.add("hidden"); $("retryBtn").classList.add("hidden");
+      $("choices").classList.remove("hidden"); $("hintBox").classList.add("show");
+    };
+    $("nextBtn").onclick=()=>{
+      beep();
+      current++;
+      if(current>=questions.length){
+        $("finalName").textContent=`${playerName} 탐험대원`;
+        showScreen("endScreen");
+      }else{
+        renderQuestion();
+      }
+    };
+    $("restartBtn").onclick=()=>{
+      beep(); $("nameInput").value=""; current=0; showScreen("startScreen");
+    };
+    $("soundBtn").onclick=()=>{
+      soundOn=!soundOn;
+      $("soundBtn").textContent=soundOn?"🔊":"🔇";
+      if(soundOn) beep();
+    };
   </script>
 </body>
 </html>
